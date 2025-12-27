@@ -3,107 +3,1854 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projek Login UAS - OOP</title>
+    <title>UAS Project - Modern Login OOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; margin: 0; }
-        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 300px; }
-        h2 { text-align: center; color: #333; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-        #message { margin-top: 15px; text-align: center; font-weight: bold; }
-        .error { color: red; }
-        .success { color: green; }
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --error-color: #ff7675;
+            --success-color: #55efc4;
+            --text-color: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Card Container */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Styling Input */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Button Modern */
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        button:hover {
+            background: #5b4bc4;
+            transform: translateY(-2px);
+        }
+
+        /* Feedback Messages */
+        #message {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            min-height: 1.2rem;
+        }
+
+        .error { color: var(--error-color); animation: shake 0.4s; }
+        .success { color: var(--success-color); }
+
+        /* Halaman User */
+        .user-page {
+            display: none;
+        }
+
+        .user-page.active {
+            display: block;
+        }
+
+        .user-icon {
+            font-size: 50px;
+            background: #eee;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="container" id="loginBox">
-    <h2>Login User</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="authApp.handleLogin()">Login</button>
-    <div id="message"></div>
-</div>
+    <div class="card" id="loginContainer">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button id="btnLogin">Login</button>
+        <div id="message"></div>
+    </div>
 
-<div class="container hidden" id="userPage">
-    <h2>Info Halaman User</h2>
-    <p>Selamat datang, <span id="displayName"></span>!</p>
-    <p>Status: Login Berhasil</p>
-    <button onclick="authApp.handleLogout()" style="background-color: #dc3545;">Logout</button>
-</div>
+    <div class="card hidden" id="userContainer">
+        <div class="user-icon">👤</div>
+        <h2>Info Halaman User</h2>
+        <p>Halo, <strong id="userNameDisplay"></strong>!</p>
+        <p style="color: #666; font-size: 0.9rem;">Anda berhasil masuk ke sistem.</p>
+        <br>
+        <button onclick="location.reload()" style="background: #636e72;">Logout</button>
+    </div>
 
 <script>
-    // Class OOP untuk Sistem Autentikasi
-    class AuthSystem {
+    /**
+     * CLASS DATABASE (OOP)
+     * Mengelola penyimpanan data JSON di Local Storage
+     */
+    class UserDatabase {
         constructor() {
-            this.dbKey = "user_dataset";
-            this.initDatabase();
+            this.storageKey = "uas_app_users";
+            this.init();
         }
 
-        // Simulasi dataset JSON yang disimpan ke Local Storage
-        initDatabase() {
-            const initialData = [
-                { "username": "admin", "password": "123" },
-                { "username": "mahasiswa", "password": "uas" }
+        init() {
+            // Dataset awal dalam format JSON
+            const defaultUsers = [
+                { user: "admin", pass: "12345" },
+                { user: "student", pass: "uas2024" }
             ];
 
-            // Simpan ke localStorage jika belum ada data
-            if (!localStorage.getItem(this.dbKey)) {
-                localStorage.setItem(this.dbKey, JSON.stringify(initialData));
-                console.log("Database JSON berhasil diinisialisasi di LocalStorage.");
+            if (!localStorage.getItem(this.storageKey)) {
+                localStorage.setItem(this.storageKey, JSON.stringify(defaultUsers));
             }
         }
 
-        // Method untuk memvalidasi login
-        login(inputUser, inputPass) {
-            const data = JSON.parse(localStorage.getItem(this.dbKey));
-            
-            // Mencari user di dalam dataset
-            const userMatch = data.find(user => 
-                user.username === inputUser && user.password === inputPass
-            );
-
-            return userMatch ? { status: true, name: userMatch.username } : { status: false };
+        getUsers() {
+            return JSON.parse(localStorage.getItem(this.storageKey));
         }
     }
 
-    // Class UI untuk mengelola tampilan
-    class AppUI {
-        constructor(authInstance) {
-            this.auth = authInstance;
-            this.msgElement = document.getElementById('message');
+    /**
+     * CLASS AUTHENTICATION (OOP)
+     * Mengelola logika pengecekan login
+     */
+    class AuthService {
+        constructor(database) {
+            this.db = database;
+        }
+
+        validate(username, password) {
+            const users = this.db.getUsers();
+            return users.find(u => u.user === username && u.pass === password);
+        }
+    }
+
+    /**
+     * CLASS UI MANAGER (OOP)
+     * Mengelola tampilan dan event listener
+     */
+    class AppController {
+        constructor(authService) {
+            this.auth = authService;
+            this.initEvents();
+        }
+
+        initEvents() {
+            document.getElementById('btnLogin').addEventListener('click', () => this.handleLogin());
         }
 
         handleLogin() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const msg = document.getElementById('message');
 
-            const result = this.auth.login(user, pass);
+            const userData = this.auth.validate(u, p);
 
-            if (result.status) {
-                this.showUserPage(result.name);
+            if (userData) {
+                this.showSuccess(userData.user);
             } else {
-                this.msgElement.textContent = "Salah login";
-                this.msgElement.className = "error";
+                msg.textContent = "Salah login";
+                msg.className = "error";
             }
         }
 
-        showUserPage(username) {
-            document.getElementById('loginBox').classList.add('hidden');
-            document.getElementById('userPage').classList.remove('hidden');
-            document.getElementById('displayName').textContent = username;
-        }
-
-        handleLogout() {
-            location.reload(); // Refresh halaman untuk kembali ke login
+        showSuccess(name) {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('userContainer').classList.remove('hidden');
+            document.getElementById('userNameDisplay').textContent = name;
         }
     }
 
-    // Inisialisasi Objek
-    const system = new AuthSystem();
-    const authApp = new AppUI(system);
+    // Eksekusi Program
+    const myDb = new UserDatabase();
+    const myAuth = new AuthService(myDb);
+    const myApp = new AppController(myAuth);
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAS Project - Modern Login OOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --error-color: #ff7675;
+            --success-color: #55efc4;
+            --text-color: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Card Container */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Styling Input */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Button Modern */
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        button:hover {
+            background: #5b4bc4;
+            transform: translateY(-2px);
+        }
+
+        /* Feedback Messages */
+        #message {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            min-height: 1.2rem;
+        }
+
+        .error { color: var(--error-color); animation: shake 0.4s; }
+        .success { color: var(--success-color); }
+
+        /* Halaman User */
+        .user-page {
+            display: none;
+        }
+
+        .user-page.active {
+            display: block;
+        }
+
+        .user-icon {
+            font-size: 50px;
+            background: #eee;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="loginContainer">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button id="btnLogin">Login</button>
+        <div id="message"></div>
+    </div>
+
+    <div class="card hidden" id="userContainer">
+        <div class="user-icon">👤</div>
+        <h2>Info Halaman User</h2>
+        <p>Halo, <strong id="userNameDisplay"></strong>!</p>
+        <p style="color: #666; font-size: 0.9rem;">Anda berhasil masuk ke sistem.</p>
+        <br>
+        <button onclick="location.reload()" style="background: #636e72;">Logout</button>
+    </div>
+
+<script>
+    /**
+     * CLASS DATABASE (OOP)
+     * Mengelola penyimpanan data JSON di Local Storage
+     */
+    class UserDatabase {
+        constructor() {
+            this.storageKey = "uas_app_users";
+            this.init();
+        }
+
+        init() {
+            // Dataset awal dalam format JSON
+            const defaultUsers = [
+                { user: "admin", pass: "12345" },
+                { user: "student", pass: "uas2024" }
+            ];
+
+            if (!localStorage.getItem(this.storageKey)) {
+                localStorage.setItem(this.storageKey, JSON.stringify(defaultUsers));
+            }
+        }
+
+        getUsers() {
+            return JSON.parse(localStorage.getItem(this.storageKey));
+        }
+    }
+
+    /**
+     * CLASS AUTHENTICATION (OOP)
+     * Mengelola logika pengecekan login
+     */
+    class AuthService {
+        constructor(database) {
+            this.db = database;
+        }
+
+        validate(username, password) {
+            const users = this.db.getUsers();
+            return users.find(u => u.user === username && u.pass === password);
+        }
+    }
+
+    /**
+     * CLASS UI MANAGER (OOP)
+     * Mengelola tampilan dan event listener
+     */
+    class AppController {
+        constructor(authService) {
+            this.auth = authService;
+            this.initEvents();
+        }
+
+        initEvents() {
+            document.getElementById('btnLogin').addEventListener('click', () => this.handleLogin());
+        }
+
+        handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const msg = document.getElementById('message');
+
+            const userData = this.auth.validate(u, p);
+
+            if (userData) {
+                this.showSuccess(userData.user);
+            } else {
+                msg.textContent = "Salah login";
+                msg.className = "error";
+            }
+        }
+
+        showSuccess(name) {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('userContainer').classList.remove('hidden');
+            document.getElementById('userNameDisplay').textContent = name;
+        }
+    }
+
+    // Eksekusi Program
+    const myDb = new UserDatabase();
+    const myAuth = new AuthService(myDb);
+    const myApp = new AppController(myAuth);
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAS Project - Modern Login OOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --error-color: #ff7675;
+            --success-color: #55efc4;
+            --text-color: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Card Container */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Styling Input */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Button Modern */
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        button:hover {
+            background: #5b4bc4;
+            transform: translateY(-2px);
+        }
+
+        /* Feedback Messages */
+        #message {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            min-height: 1.2rem;
+        }
+
+        .error { color: var(--error-color); animation: shake 0.4s; }
+        .success { color: var(--success-color); }
+
+        /* Halaman User */
+        .user-page {
+            display: none;
+        }
+
+        .user-page.active {
+            display: block;
+        }
+
+        .user-icon {
+            font-size: 50px;
+            background: #eee;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="loginContainer">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button id="btnLogin">Login</button>
+        <div id="message"></div>
+    </div>
+
+    <div class="card hidden" id="userContainer">
+        <div class="user-icon">👤</div>
+        <h2>Info Halaman User</h2>
+        <p>Halo, <strong id="userNameDisplay"></strong>!</p>
+        <p style="color: #666; font-size: 0.9rem;">Anda berhasil masuk ke sistem.</p>
+        <br>
+        <button onclick="location.reload()" style="background: #636e72;">Logout</button>
+    </div>
+
+<script>
+    /**
+     * CLASS DATABASE (OOP)
+     * Mengelola penyimpanan data JSON di Local Storage
+     */
+    class UserDatabase {
+        constructor() {
+            this.storageKey = "uas_app_users";
+            this.init();
+        }
+
+        init() {
+            // Dataset awal dalam format JSON
+            const defaultUsers = [
+                { user: "admin", pass: "12345" },
+                { user: "student", pass: "uas2024" }
+            ];
+
+            if (!localStorage.getItem(this.storageKey)) {
+                localStorage.setItem(this.storageKey, JSON.stringify(defaultUsers));
+            }
+        }
+
+        getUsers() {
+            return JSON.parse(localStorage.getItem(this.storageKey));
+        }
+    }
+
+    /**
+     * CLASS AUTHENTICATION (OOP)
+     * Mengelola logika pengecekan login
+     */
+    class AuthService {
+        constructor(database) {
+            this.db = database;
+        }
+
+        validate(username, password) {
+            const users = this.db.getUsers();
+            return users.find(u => u.user === username && u.pass === password);
+        }
+    }
+
+    /**
+     * CLASS UI MANAGER (OOP)
+     * Mengelola tampilan dan event listener
+     */
+    class AppController {
+        constructor(authService) {
+            this.auth = authService;
+            this.initEvents();
+        }
+
+        initEvents() {
+            document.getElementById('btnLogin').addEventListener('click', () => this.handleLogin());
+        }
+
+        handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const msg = document.getElementById('message');
+
+            const userData = this.auth.validate(u, p);
+
+            if (userData) {
+                this.showSuccess(userData.user);
+            } else {
+                msg.textContent = "Salah login";
+                msg.className = "error";
+            }
+        }
+
+        showSuccess(name) {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('userContainer').classList.remove('hidden');
+            document.getElementById('userNameDisplay').textContent = name;
+        }
+    }
+
+    // Eksekusi Program
+    const myDb = new UserDatabase();
+    const myAuth = new AuthService(myDb);
+    const myApp = new AppController(myAuth);
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAS Project - Modern Login OOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --error-color: #ff7675;
+            --success-color: #55efc4;
+            --text-color: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Card Container */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Styling Input */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Button Modern */
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        button:hover {
+            background: #5b4bc4;
+            transform: translateY(-2px);
+        }
+
+        /* Feedback Messages */
+        #message {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            min-height: 1.2rem;
+        }
+
+        .error { color: var(--error-color); animation: shake 0.4s; }
+        .success { color: var(--success-color); }
+
+        /* Halaman User */
+        .user-page {
+            display: none;
+        }
+
+        .user-page.active {
+            display: block;
+        }
+
+        .user-icon {
+            font-size: 50px;
+            background: #eee;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="loginContainer">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button id="btnLogin">Login</button>
+        <div id="message"></div>
+    </div>
+
+    <div class="card hidden" id="userContainer">
+        <div class="user-icon">👤</div>
+        <h2>Info Halaman User</h2>
+        <p>Halo, <strong id="userNameDisplay"></strong>!</p>
+        <p style="color: #666; font-size: 0.9rem;">Anda berhasil masuk ke sistem.</p>
+        <br>
+        <button onclick="location.reload()" style="background: #636e72;">Logout</button>
+    </div>
+
+<script>
+    /**
+     * CLASS DATABASE (OOP)
+     * Mengelola penyimpanan data JSON di Local Storage
+     */
+    class UserDatabase {
+        constructor() {
+            this.storageKey = "uas_app_users";
+            this.init();
+        }
+
+        init() {
+            // Dataset awal dalam format JSON
+            const defaultUsers = [
+                { user: "admin", pass: "12345" },
+                { user: "student", pass: "uas2024" }
+            ];
+
+            if (!localStorage.getItem(this.storageKey)) {
+                localStorage.setItem(this.storageKey, JSON.stringify(defaultUsers));
+            }
+        }
+
+        getUsers() {
+            return JSON.parse(localStorage.getItem(this.storageKey));
+        }
+    }
+
+    /**
+     * CLASS AUTHENTICATION (OOP)
+     * Mengelola logika pengecekan login
+     */
+    class AuthService {
+        constructor(database) {
+            this.db = database;
+        }
+
+        validate(username, password) {
+            const users = this.db.getUsers();
+            return users.find(u => u.user === username && u.pass === password);
+        }
+    }
+
+    /**
+     * CLASS UI MANAGER (OOP)
+     * Mengelola tampilan dan event listener
+     */
+    class AppController {
+        constructor(authService) {
+            this.auth = authService;
+            this.initEvents();
+        }
+
+        initEvents() {
+            document.getElementById('btnLogin').addEventListener('click', () => this.handleLogin());
+        }
+
+        handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const msg = document.getElementById('message');
+
+            const userData = this.auth.validate(u, p);
+
+            if (userData) {
+                this.showSuccess(userData.user);
+            } else {
+                msg.textContent = "Salah login";
+                msg.className = "error";
+            }
+        }
+
+        showSuccess(name) {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('userContainer').classList.remove('hidden');
+            document.getElementById('userNameDisplay').textContent = name;
+        }
+    }
+
+    // Eksekusi Program
+    const myDb = new UserDatabase();
+    const myAuth = new AuthService(myDb);
+    const myApp = new AppController(myAuth);
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAS Project - Modern Login OOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --error-color: #ff7675;
+            --success-color: #55efc4;
+            --text-color: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Card Container */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Styling Input */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Button Modern */
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        button:hover {
+            background: #5b4bc4;
+            transform: translateY(-2px);
+        }
+
+        /* Feedback Messages */
+        #message {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            min-height: 1.2rem;
+        }
+
+        .error { color: var(--error-color); animation: shake 0.4s; }
+        .success { color: var(--success-color); }
+
+        /* Halaman User */
+        .user-page {
+            display: none;
+        }
+
+        .user-page.active {
+            display: block;
+        }
+
+        .user-icon {
+            font-size: 50px;
+            background: #eee;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="loginContainer">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button id="btnLogin">Login</button>
+        <div id="message"></div>
+    </div>
+
+    <div class="card hidden" id="userContainer">
+        <div class="user-icon">👤</div>
+        <h2>Info Halaman User</h2>
+        <p>Halo, <strong id="userNameDisplay"></strong>!</p>
+        <p style="color: #666; font-size: 0.9rem;">Anda berhasil masuk ke sistem.</p>
+        <br>
+        <button onclick="location.reload()" style="background: #636e72;">Logout</button>
+    </div>
+
+<script>
+    /**
+     * CLASS DATABASE (OOP)
+     * Mengelola penyimpanan data JSON di Local Storage
+     */
+    class UserDatabase {
+        constructor() {
+            this.storageKey = "uas_app_users";
+            this.init();
+        }
+
+        init() {
+            // Dataset awal dalam format JSON
+            const defaultUsers = [
+                { user: "admin", pass: "12345" },
+                { user: "student", pass: "uas2024" }
+            ];
+
+            if (!localStorage.getItem(this.storageKey)) {
+                localStorage.setItem(this.storageKey, JSON.stringify(defaultUsers));
+            }
+        }
+
+        getUsers() {
+            return JSON.parse(localStorage.getItem(this.storageKey));
+        }
+    }
+
+    /**
+     * CLASS AUTHENTICATION (OOP)
+     * Mengelola logika pengecekan login
+     */
+    class AuthService {
+        constructor(database) {
+            this.db = database;
+        }
+
+        validate(username, password) {
+            const users = this.db.getUsers();
+            return users.find(u => u.user === username && u.pass === password);
+        }
+    }
+
+    /**
+     * CLASS UI MANAGER (OOP)
+     * Mengelola tampilan dan event listener
+     */
+    class AppController {
+        constructor(authService) {
+            this.auth = authService;
+            this.initEvents();
+        }
+
+        initEvents() {
+            document.getElementById('btnLogin').addEventListener('click', () => this.handleLogin());
+        }
+
+        handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const msg = document.getElementById('message');
+
+            const userData = this.auth.validate(u, p);
+
+            if (userData) {
+                this.showSuccess(userData.user);
+            } else {
+                msg.textContent = "Salah login";
+                msg.className = "error";
+            }
+        }
+
+        showSuccess(name) {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('userContainer').classList.remove('hidden');
+            document.getElementById('userNameDisplay').textContent = name;
+        }
+    }
+
+    // Eksekusi Program
+    const myDb = new UserDatabase();
+    const myAuth = new AuthService(myDb);
+    const myApp = new AppController(myAuth);
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAS Project - Modern Login OOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --error-color: #ff7675;
+            --success-color: #55efc4;
+            --text-color: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Card Container */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Styling Input */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Button Modern */
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        button:hover {
+            background: #5b4bc4;
+            transform: translateY(-2px);
+        }
+
+        /* Feedback Messages */
+        #message {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            min-height: 1.2rem;
+        }
+
+        .error { color: var(--error-color); animation: shake 0.4s; }
+        .success { color: var(--success-color); }
+
+        /* Halaman User */
+        .user-page {
+            display: none;
+        }
+
+        .user-page.active {
+            display: block;
+        }
+
+        .user-icon {
+            font-size: 50px;
+            background: #eee;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="loginContainer">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button id="btnLogin">Login</button>
+        <div id="message"></div>
+    </div>
+
+    <div class="card hidden" id="userContainer">
+        <div class="user-icon">👤</div>
+        <h2>Info Halaman User</h2>
+        <p>Halo, <strong id="userNameDisplay"></strong>!</p>
+        <p style="color: #666; font-size: 0.9rem;">Anda berhasil masuk ke sistem.</p>
+        <br>
+        <button onclick="location.reload()" style="background: #636e72;">Logout</button>
+    </div>
+
+<script>
+    /**
+     * CLASS DATABASE (OOP)
+     * Mengelola penyimpanan data JSON di Local Storage
+     */
+    class UserDatabase {
+        constructor() {
+            this.storageKey = "uas_app_users";
+            this.init();
+        }
+
+        init() {
+            // Dataset awal dalam format JSON
+            const defaultUsers = [
+                { user: "admin", pass: "12345" },
+                { user: "student", pass: "uas2024" }
+            ];
+
+            if (!localStorage.getItem(this.storageKey)) {
+                localStorage.setItem(this.storageKey, JSON.stringify(defaultUsers));
+            }
+        }
+
+        getUsers() {
+            return JSON.parse(localStorage.getItem(this.storageKey));
+        }
+    }
+
+    /**
+     * CLASS AUTHENTICATION (OOP)
+     * Mengelola logika pengecekan login
+     */
+    class AuthService {
+        constructor(database) {
+            this.db = database;
+        }
+
+        validate(username, password) {
+            const users = this.db.getUsers();
+            return users.find(u => u.user === username && u.pass === password);
+        }
+    }
+
+    /**
+     * CLASS UI MANAGER (OOP)
+     * Mengelola tampilan dan event listener
+     */
+    class AppController {
+        constructor(authService) {
+            this.auth = authService;
+            this.initEvents();
+        }
+
+        initEvents() {
+            document.getElementById('btnLogin').addEventListener('click', () => this.handleLogin());
+        }
+
+        handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const msg = document.getElementById('message');
+
+            const userData = this.auth.validate(u, p);
+
+            if (userData) {
+                this.showSuccess(userData.user);
+            } else {
+                msg.textContent = "Salah login";
+                msg.className = "error";
+            }
+        }
+
+        showSuccess(name) {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('userContainer').classList.remove('hidden');
+            document.getElementById('userNameDisplay').textContent = name;
+        }
+    }
+
+    // Eksekusi Program
+    const myDb = new UserDatabase();
+    const myAuth = new AuthService(myDb);
+    const myApp = new AppController(myAuth);
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAS Project - Modern Login OOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --error-color: #ff7675;
+            --success-color: #55efc4;
+            --text-color: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Card Container */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Styling Input */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Button Modern */
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        button:hover {
+            background: #5b4bc4;
+            transform: translateY(-2px);
+        }
+
+        /* Feedback Messages */
+        #message {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            min-height: 1.2rem;
+        }
+
+        .error { color: var(--error-color); animation: shake 0.4s; }
+        .success { color: var(--success-color); }
+
+        /* Halaman User */
+        .user-page {
+            display: none;
+        }
+
+        .user-page.active {
+            display: block;
+        }
+
+        .user-icon {
+            font-size: 50px;
+            background: #eee;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="loginContainer">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button id="btnLogin">Login</button>
+        <div id="message"></div>
+    </div>
+
+    <div class="card hidden" id="userContainer">
+        <div class="user-icon">👤</div>
+        <h2>Info Halaman User</h2>
+        <p>Halo, <strong id="userNameDisplay"></strong>!</p>
+        <p style="color: #666; font-size: 0.9rem;">Anda berhasil masuk ke sistem.</p>
+        <br>
+        <button onclick="location.reload()" style="background: #636e72;">Logout</button>
+    </div>
+
+<script>
+    /**
+     * CLASS DATABASE (OOP)
+     * Mengelola penyimpanan data JSON di Local Storage
+     */
+    class UserDatabase {
+        constructor() {
+            this.storageKey = "uas_app_users";
+            this.init();
+        }
+
+        init() {
+            // Dataset awal dalam format JSON
+            const defaultUsers = [
+                { user: "admin", pass: "12345" },
+                { user: "student", pass: "uas2024" }
+            ];
+
+            if (!localStorage.getItem(this.storageKey)) {
+                localStorage.setItem(this.storageKey, JSON.stringify(defaultUsers));
+            }
+        }
+
+        getUsers() {
+            return JSON.parse(localStorage.getItem(this.storageKey));
+        }
+    }
+
+    /**
+     * CLASS AUTHENTICATION (OOP)
+     * Mengelola logika pengecekan login
+     */
+    class AuthService {
+        constructor(database) {
+            this.db = database;
+        }
+
+        validate(username, password) {
+            const users = this.db.getUsers();
+            return users.find(u => u.user === username && u.pass === password);
+        }
+    }
+
+    /**
+     * CLASS UI MANAGER (OOP)
+     * Mengelola tampilan dan event listener
+     */
+    class AppController {
+        constructor(authService) {
+            this.auth = authService;
+            this.initEvents();
+        }
+
+        initEvents() {
+            document.getElementById('btnLogin').addEventListener('click', () => this.handleLogin());
+        }
+
+        handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const msg = document.getElementById('message');
+
+            const userData = this.auth.validate(u, p);
+
+            if (userData) {
+                this.showSuccess(userData.user);
+            } else {
+                msg.textContent = "Salah login";
+                msg.className = "error";
+            }
+        }
+
+        showSuccess(name) {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('userContainer').classList.remove('hidden');
+            document.getElementById('userNameDisplay').textContent = name;
+        }
+    }
+
+    // Eksekusi Program
+    const myDb = new UserDatabase();
+    const myAuth = new AuthService(myDb);
+    const myApp = new AppController(myAuth);
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAS Project - Modern Login OOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --error-color: #ff7675;
+            --success-color: #55efc4;
+            --text-color: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Card Container */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Styling Input */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Button Modern */
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        button:hover {
+            background: #5b4bc4;
+            transform: translateY(-2px);
+        }
+
+        /* Feedback Messages */
+        #message {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            min-height: 1.2rem;
+        }
+
+        .error { color: var(--error-color); animation: shake 0.4s; }
+        .success { color: var(--success-color); }
+
+        /* Halaman User */
+        .user-page {
+            display: none;
+        }
+
+        .user-page.active {
+            display: block;
+        }
+
+        .user-icon {
+            font-size: 50px;
+            background: #eee;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="loginContainer">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button id="btnLogin">Login</button>
+        <div id="message"></div>
+    </div>
+
+    <div class="card hidden" id="userContainer">
+        <div class="user-icon">👤</div>
+        <h2>Info Halaman User</h2>
+        <p>Halo, <strong id="userNameDisplay"></strong>!</p>
+        <p style="color: #666; font-size: 0.9rem;">Anda berhasil masuk ke sistem.</p>
+        <br>
+        <button onclick="location.reload()" style="background: #636e72;">Logout</button>
+    </div>
+
+<script>
+    /**
+     * CLASS DATABASE (OOP)
+     * Mengelola penyimpanan data JSON di Local Storage
+     */
+    class UserDatabase {
+        constructor() {
+            this.storageKey = "uas_app_users";
+            this.init();
+        }
+
+        init() {
+            // Dataset awal dalam format JSON
+            const defaultUsers = [
+                { user: "admin", pass: "12345" },
+                { user: "student", pass: "uas2024" }
+            ];
+
+            if (!localStorage.getItem(this.storageKey)) {
+                localStorage.setItem(this.storageKey, JSON.stringify(defaultUsers));
+            }
+        }
+
+        getUsers() {
+            return JSON.parse(localStorage.getItem(this.storageKey));
+        }
+    }
+
+    /**
+     * CLASS AUTHENTICATION (OOP)
+     * Mengelola logika pengecekan login
+     */
+    class AuthService {
+        constructor(database) {
+            this.db = database;
+        }
+
+        validate(username, password) {
+            const users = this.db.getUsers();
+            return users.find(u => u.user === username && u.pass === password);
+        }
+    }
+
+    /**
+     * CLASS UI MANAGER (OOP)
+     * Mengelola tampilan dan event listener
+     */
+    class AppController {
+        constructor(authService) {
+            this.auth = authService;
+            this.initEvents();
+        }
+
+        initEvents() {
+            document.getElementById('btnLogin').addEventListener('click', () => this.handleLogin());
+        }
+
+        handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const msg = document.getElementById('message');
+
+            const userData = this.auth.validate(u, p);
+
+            if (userData) {
+                this.showSuccess(userData.user);
+            } else {
+                msg.textContent = "Salah login";
+                msg.className = "error";
+            }
+        }
+
+        showSuccess(name) {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('userContainer').classList.remove('hidden');
+            document.getElementById('userNameDisplay').textContent = name;
+        }
+    }
+
+    // Eksekusi Program
+    const myDb = new UserDatabase();
+    const myAuth = new AuthService(myDb);
+    const myApp = new AppController(myAuth);
 </script>
 
 </body>
