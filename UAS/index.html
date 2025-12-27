@@ -1,1 +1,110 @@
-Muhammad Muslih Mustika
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projek Login UAS - OOP</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; margin: 0; }
+        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 300px; }
+        h2 { text-align: center; color: #333; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        #message { margin-top: 15px; text-align: center; font-weight: bold; }
+        .error { color: red; }
+        .success { color: green; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="loginBox">
+    <h2>Login User</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="authApp.handleLogin()">Login</button>
+    <div id="message"></div>
+</div>
+
+<div class="container hidden" id="userPage">
+    <h2>Info Halaman User</h2>
+    <p>Selamat datang, <span id="displayName"></span>!</p>
+    <p>Status: Login Berhasil</p>
+    <button onclick="authApp.handleLogout()" style="background-color: #dc3545;">Logout</button>
+</div>
+
+<script>
+    // Class OOP untuk Sistem Autentikasi
+    class AuthSystem {
+        constructor() {
+            this.dbKey = "user_dataset";
+            this.initDatabase();
+        }
+
+        // Simulasi dataset JSON yang disimpan ke Local Storage
+        initDatabase() {
+            const initialData = [
+                { "username": "admin", "password": "123" },
+                { "username": "mahasiswa", "password": "uas" }
+            ];
+
+            // Simpan ke localStorage jika belum ada data
+            if (!localStorage.getItem(this.dbKey)) {
+                localStorage.setItem(this.dbKey, JSON.stringify(initialData));
+                console.log("Database JSON berhasil diinisialisasi di LocalStorage.");
+            }
+        }
+
+        // Method untuk memvalidasi login
+        login(inputUser, inputPass) {
+            const data = JSON.parse(localStorage.getItem(this.dbKey));
+            
+            // Mencari user di dalam dataset
+            const userMatch = data.find(user => 
+                user.username === inputUser && user.password === inputPass
+            );
+
+            return userMatch ? { status: true, name: userMatch.username } : { status: false };
+        }
+    }
+
+    // Class UI untuk mengelola tampilan
+    class AppUI {
+        constructor(authInstance) {
+            this.auth = authInstance;
+            this.msgElement = document.getElementById('message');
+        }
+
+        handleLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            const result = this.auth.login(user, pass);
+
+            if (result.status) {
+                this.showUserPage(result.name);
+            } else {
+                this.msgElement.textContent = "Salah login";
+                this.msgElement.className = "error";
+            }
+        }
+
+        showUserPage(username) {
+            document.getElementById('loginBox').classList.add('hidden');
+            document.getElementById('userPage').classList.remove('hidden');
+            document.getElementById('displayName').textContent = username;
+        }
+
+        handleLogout() {
+            location.reload(); // Refresh halaman untuk kembali ke login
+        }
+    }
+
+    // Inisialisasi Objek
+    const system = new AuthSystem();
+    const authApp = new AppUI(system);
+</script>
+
+</body>
+</html>
