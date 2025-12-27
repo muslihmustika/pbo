@@ -3,56 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Login System - OOP</title>
+    <title>Professional Login - Green Theme</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            --card-bg: rgba(255, 255, 255, 1);
+            --primary-green: #10b981; /* Hijau Emerald */
+            --primary-green-hover: #059669;
+            --danger-red: #ef4444;    /* Merah Rose */
+            --danger-red-hover: #dc2626;
+            --bg-dark: #0f172a;
             --text-main: #1e293b;
             --text-muted: #64748b;
-            --error: #ef4444;
-            --success: #10b981;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg-gradient);
+            background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-main);
         }
 
-        /* Container & Card */
         .auth-card {
-            background: var(--card-bg);
+            background: #ffffff;
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
             padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            text-align: center;
         }
 
-        .header { text-align: center; margin-bottom: 32px; }
-        .header h1 { font-size: 1.5rem; font-weight: 600; color: #0f172a; }
-        .header p { color: var(--text-muted); font-size: 0.875rem; margin-top: 8px; }
+        .header h1 { font-size: 1.5rem; color: var(--text-main); margin-bottom: 8px; }
+        .header p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 30px; }
 
-        /* Form Styling */
-        .form-group { margin-bottom: 20px; position: relative; }
-        label { display: block; font-size: 0.8rem; font-weight: 500; margin-bottom: 6px; color: #475569; }
+        .form-group { text-align: left; margin-bottom: 18px; }
+        label { display: block; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 6px; text-transform: uppercase; }
         
         input {
             width: 100%;
             padding: 12px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
             font-size: 0.95rem;
             transition: all 0.2s;
             background: #f8fafc;
@@ -60,53 +55,64 @@
 
         input:focus {
             outline: none;
-            border-color: var(--primary);
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            border-color: var(--primary-green);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
         }
 
-        /* Button Styling */
-        button {
+        /* Tombol Login Hijau */
+        .btn-login {
             width: 100%;
-            padding: 12px;
-            background: var(--primary);
+            padding: 13px;
+            background: var(--primary-green);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: all 0.2s;
+            margin-top: 10px;
         }
 
-        button:hover { background: var(--primary-hover); }
-        button:active { transform: scale(0.98); }
+        .btn-login:hover { background: var(--primary-green-hover); transform: translateY(-1px); }
 
-        /* Message Styling */
+        /* Tombol Logout Merah */
+        .btn-logout {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            color: var(--danger-red);
+            border: 1.5px solid var(--danger-red);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-logout:hover { background: var(--danger-red); color: white; }
+
         #message {
-            margin-top: 16px;
-            text-align: center;
+            margin-top: 15px;
             font-size: 0.85rem;
             min-height: 20px;
             font-weight: 500;
         }
 
-        .error-text { color: var(--error); }
-        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        .error-text { color: var(--danger-red); animation: shake 0.4s ease-in-out; }
 
         @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
-        /* User Info Page */
-        .user-info { text-align: center; display: none; }
-        .avatar {
-            width: 64px; height: 64px; background: #dbeafe; color: var(--primary);
+        .user-icon {
+            width: 60px; height: 60px; background: #ecfdf5; color: var(--primary-green);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 16px; font-size: 1.5rem; font-weight: bold;
+            margin: 0 auto 15px; font-size: 1.5rem;
         }
 
         .hidden { display: none; }
@@ -116,13 +122,13 @@
 
     <div class="auth-card" id="loginCard">
         <div class="header">
-            <h1>Sign In</h1>
-            <p>Masukkan kredensial Anda untuk akses</p>
+            <h1>Login System</h1>
+            <p>Silakan masuk ke akun Anda</p>
         </div>
         
         <div class="form-group">
             <label>Username</label>
-            <input type="text" id="userInput" placeholder="Username">
+            <input type="text" id="userInput" placeholder="Masukkan username">
         </div>
         
         <div class="form-group">
@@ -130,114 +136,101 @@
             <input type="password" id="passInput" placeholder="••••••••">
         </div>
         
-        <button id="btnSubmit">Masuk ke Sistem</button>
+        <button class="btn-login" id="btnSubmit">Masuk Sekarang</button>
         <div id="message"></div>
     </div>
 
     <div class="auth-card hidden" id="userCard">
-        <div class="user-info" style="display: block;">
-            <div class="avatar" id="avatarChar">U</div>
-            <h2 id="welcomeName">Halo, User!</h2>
-            <p style="color: var(--text-muted); margin-bottom: 24px;">Selamat datang di Dashboard User</p>
-            <button onclick="location.reload()" style="background: #f1f5f9; color: #475569;">Logout</button>
-        </div>
+        <div class="user-icon">👤</div>
+        <h2 id="welcomeName">Halo, Pengguna!</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Akses akun berhasil diverifikasi.</p>
+        
+        <button class="btn-logout" onclick="location.reload()">Logout dari Sistem</button>
     </div>
 
 <script>
     /**
-     * @class DataManager
-     * Mengelola Dataset JSON di LocalStorage
+     * CLASS DATABASE (Data Logic)
      */
-    class DataManager {
+    class StorageProvider {
         constructor() {
-            this.key = "db_login_uas";
-            this.seedData();
+            this.key = "uas_db_auth";
+            this.seed();
         }
 
-        seedData() {
-            const dataSet = [
+        seed() {
+            const initialUsers = [
                 { username: "admin", password: "123" },
-                { username: "user1", password: "password" }
+                { username: "user", password: "uas" }
             ];
             if (!localStorage.getItem(this.key)) {
-                localStorage.setItem(this.key, JSON.stringify(dataSet));
+                localStorage.setItem(this.key, JSON.stringify(initialUsers));
             }
         }
 
-        getUsers() {
+        fetchData() {
             return JSON.parse(localStorage.getItem(this.key));
         }
     }
 
     /**
-     * @class Authenticator
-     * Logika Validasi (OOP)
+     * CLASS AUTH (Business Logic)
      */
-    class Authenticator {
-        constructor(manager) {
-            this.manager = manager;
+    class AuthService {
+        constructor(storage) {
+            this.storage = storage;
         }
 
-        attempt(user, pass) {
-            const users = this.manager.getUsers();
-            return users.find(u => u.username === user && u.password === pass);
+        checkCredentials(u, p) {
+            const users = this.storage.fetchData();
+            return users.find(account => account.username === u && account.password === p);
         }
     }
 
     /**
-     * @class UIController
-     * Mengelola interaksi tampilan
+     * CLASS APP (UI Controller)
      */
-    class UIController {
+    class LoginApp {
         constructor(auth) {
             this.auth = auth;
-            this.initElements();
-            this.bindEvents();
+            this.setupListeners();
         }
 
-        initElements() {
-            this.loginCard = document.getElementById('loginCard');
-            this.userCard = document.getElementById('userCard');
-            this.msgBox = document.getElementById('message');
-            this.nameHeading = document.getElementById('welcomeName');
-            this.avatar = document.getElementById('avatarChar');
+        setupListeners() {
+            document.getElementById('btnSubmit').addEventListener('click', () => this.executeLogin());
         }
 
-        bindEvents() {
-            document.getElementById('btnSubmit').addEventListener('click', () => this.handleLogin());
-        }
-
-        handleLogin() {
+        executeLogin() {
             const u = document.getElementById('userInput').value;
             const p = document.getElementById('passInput').value;
+            const msg = document.getElementById('message');
 
-            const userFound = this.auth.attempt(u, p);
+            const validUser = this.auth.checkCredentials(u, p);
 
-            if (userFound) {
-                this.renderSuccess(userFound.username);
+            if (validUser) {
+                this.switchToUserPage(validUser.username);
             } else {
-                this.renderError();
+                msg.textContent = "Salah login";
+                msg.className = "error-text";
+                // Reset animas shake
+                msg.style.animation = 'none';
+                msg.offsetHeight; 
+                msg.style.animation = null;
             }
         }
 
-        renderError() {
-            this.msgBox.textContent = "Salah login";
-            this.msgBox.className = "error-text shake";
-            setTimeout(() => this.msgBox.classList.remove('shake'), 500);
-        }
-
-        renderSuccess(username) {
-            this.loginCard.classList.add('hidden');
-            this.userCard.classList.remove('hidden');
-            this.nameHeading.textContent = `Selamat datang, ${username}!`;
-            this.avatar.textContent = username.charAt(0).toUpperCase();
+        switchToUserPage(username) {
+            document.getElementById('loginCard').classList.add('hidden');
+            document.getElementById('userCard').classList.remove('hidden');
+            document.getElementById('welcomeName').textContent = `Selamat datang, ${username}!`;
         }
     }
 
-    // Inisialisasi Aplikasi
-    const dbManager = new DataManager();
-    const authService = new Authenticator(dbManager);
-    new UIController(authService);
+    // Jalankan Aplikasi
+    const db = new StorageProvider();
+    const service = new AuthService(db);
+    new LoginApp(service);
 </script>
+
 </body>
 </html>
