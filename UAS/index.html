@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Login - Green Theme</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Premium Auth System - Spinner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-green: #10b981; /* Hijau Emerald */
-            --primary-green-hover: #059669;
-            --danger-red: #ef4444;    /* Merah Rose */
-            --danger-red-hover: #dc2626;
-            --bg-dark: #0f172a;
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg-gradient: linear-gradient(135deg, #064e3b 0%, #0f172a 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
             --text-main: #1e293b;
             --text-muted: #64748b;
         }
@@ -19,35 +18,54 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-gradient);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--text-main);
+            overflow: hidden;
         }
 
         .auth-card {
-            background: #ffffff;
+            background: var(--glass-bg);
             width: 100%;
-            max-width: 380px;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-            text-align: center;
+            max-width: 400px;
+            padding: 48px 40px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.6s ease-out;
         }
 
-        .header h1 { font-size: 1.5rem; color: var(--text-main); margin-bottom: 8px; }
-        .header p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 30px; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        .form-group { text-align: left; margin-bottom: 18px; }
-        label { display: block; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 6px; text-transform: uppercase; }
+        .brand-icon {
+            width: 56px; height: 56px;
+            background: #ecfdf5;
+            color: var(--primary);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.025em; }
+        .header p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 32px; }
+
+        .form-group { text-align: left; margin-bottom: 20px; position: relative; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
         
         input {
             width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
+            padding: 14px 16px;
+            border: 2px solid #f1f5f9;
+            border-radius: 12px;
             font-size: 0.95rem;
             transition: all 0.2s;
             background: #f8fafc;
@@ -55,64 +73,68 @@
 
         input:focus {
             outline: none;
-            border-color: var(--primary-green);
+            border-color: var(--primary);
             background: #ffffff;
             box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
         }
 
-        /* Tombol Login Hijau */
-        .btn-login {
-            width: 100%;
-            padding: 13px;
-            background: var(--primary-green);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 10px;
+        .toggle-password {
+            position: absolute; right: 16px; top: 41px;
+            cursor: pointer; color: var(--text-muted);
+            font-size: 1.2rem;
         }
 
-        .btn-login:hover { background: var(--primary-green-hover); transform: translateY(-1px); }
+        /* BUTTON & SPINNER */
+        .btn {
+            width: 100%; padding: 14px;
+            border: none; border-radius: 12px;
+            font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
 
-        /* Tombol Logout Merah */
-        .btn-logout {
-            width: 100%;
-            padding: 10px;
+        .btn-primary {
+            background: var(--primary); color: white;
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: var(--primary-dark);
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .btn-outline {
             background: transparent;
-            color: var(--danger-red);
-            border: 1.5px solid var(--danger-red);
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 20px;
+            color: #ef4444;
+            border: 2px solid #fee2e2;
+            margin-top: 24px;
         }
 
-        .btn-logout:hover { background: var(--danger-red); color: white; }
-
-        #message {
-            margin-top: 15px;
-            font-size: 0.85rem;
-            min-height: 20px;
-            font-weight: 500;
+        /* Animasi Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+            display: none; /* Sembunyi secara default */
         }
 
-        .error-text { color: var(--danger-red); animation: shake 0.4s ease-in-out; }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        .user-icon {
-            width: 60px; height: 60px; background: #ecfdf5; color: var(--primary-green);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 15px; font-size: 1.5rem;
+        .loading .spinner { display: block; }
+        .loading .btn-text { display: none; }
+
+        .status-badge {
+            display: inline-block; padding: 4px 12px;
+            background: #ecfdf5; color: var(--primary);
+            border-radius: 20px; font-size: 0.75rem;
+            font-weight: 700; margin-bottom: 16px;
         }
 
         .hidden { display: none; }
@@ -121,116 +143,125 @@
 <body>
 
     <div class="auth-card" id="loginCard">
+        <div class="brand-icon">🔐</div>
         <div class="header">
-            <h1>Login System</h1>
-            <p>Silakan masuk ke akun Anda</p>
+            <h1>Welcome Back</h1>
+            <p>Enter your details to access your account</p>
         </div>
         
         <div class="form-group">
             <label>Username</label>
-            <input type="text" id="userInput" placeholder="Masukkan username">
+            <input type="text" id="userInput" placeholder="e.g. admin" autocomplete="off">
         </div>
         
         <div class="form-group">
             <label>Password</label>
             <input type="password" id="passInput" placeholder="••••••••">
+            <span class="toggle-password" id="toggleBtn">👁️</span>
         </div>
         
-        <button class="btn-login" id="btnSubmit">Masuk Sekarang</button>
-        <div id="message"></div>
+        <button class="btn btn-primary" id="btnSubmit">
+            <span class="btn-text">Sign In</span>
+            <div class="spinner"></div>
+        </button>
     </div>
 
     <div class="auth-card hidden" id="userCard">
-        <div class="user-icon">👤</div>
-        <h2 id="welcomeName">Halo, Pengguna!</h2>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Akses akun berhasil diverifikasi.</p>
-        
-        <button class="btn-logout" onclick="location.reload()">Logout dari Sistem</button>
+        <div class="brand-icon">✨</div>
+        <div class="status-badge">Verified Session</div>
+        <h2 id="welcomeName">Hello!</h2>
+        <p style="color: var(--text-muted); margin-bottom: 30px;">Login berhasil. Selamat datang di dashboard Anda.</p>
+        <button class="btn btn-outline" onclick="location.reload()">Logout Session</button>
     </div>
 
 <script>
-    /**
-     * CLASS DATABASE (Data Logic)
-     */
     class StorageProvider {
         constructor() {
             this.key = "uas_db_auth";
             this.seed();
         }
-
         seed() {
-            const initialUsers = [
-                { username: "admin", password: "123" },
-                { username: "user", password: "uas" }
-            ];
-            if (!localStorage.getItem(this.key)) {
-                localStorage.setItem(this.key, JSON.stringify(initialUsers));
-            }
+            const initialUsers = [{ username: "admin", password: "123" }, { username: "user", password: "uas" }];
+            if (!localStorage.getItem(this.key)) localStorage.setItem(this.key, JSON.stringify(initialUsers));
         }
-
-        fetchData() {
-            return JSON.parse(localStorage.getItem(this.key));
-        }
+        fetchData() { return JSON.parse(localStorage.getItem(this.key)); }
     }
 
-    /**
-     * CLASS AUTH (Business Logic)
-     */
     class AuthService {
-        constructor(storage) {
-            this.storage = storage;
-        }
-
-        checkCredentials(u, p) {
-            const users = this.storage.fetchData();
-            return users.find(account => account.username === u && account.password === p);
+        constructor(storage) { this.storage = storage; }
+        verify(u, p) {
+            return this.storage.fetchData().find(user => user.username === u && user.password === p);
         }
     }
 
-    /**
-     * CLASS APP (UI Controller)
-     */
     class LoginApp {
         constructor(auth) {
             this.auth = auth;
-            this.setupListeners();
+            this.init();
         }
 
-        setupListeners() {
-            document.getElementById('btnSubmit').addEventListener('click', () => this.executeLogin());
+        init() {
+            this.btn = document.getElementById('btnSubmit');
+            this.toggleBtn = document.getElementById('toggleBtn');
+            this.passInput = document.getElementById('passInput');
+
+            this.btn.addEventListener('click', () => this.handleLogin());
+            
+            this.toggleBtn.addEventListener('click', () => {
+                const isPass = this.passInput.type === 'password';
+                this.passInput.type = isPass ? 'text' : 'password';
+                this.toggleBtn.textContent = isPass ? '🙈' : '👁️';
+            });
         }
 
-        executeLogin() {
-            const u = document.getElementById('userInput').value;
-            const p = document.getElementById('passInput').value;
-            const msg = document.getElementById('message');
+        handleLogin() {
+            const u = document.getElementById('userInput').value.trim();
+            const p = document.getElementById('passInput').value.trim();
 
-            const validUser = this.auth.checkCredentials(u, p);
+            if (!u || !p) {
+                alert("Harap isi semua field!");
+                return;
+            }
 
-            if (validUser) {
-                this.switchToUserPage(validUser.username);
+            // Aktifkan Loading State
+            this.setLoading(true);
+
+            // Simulasi delay jaringan selama 1.2 detik
+            setTimeout(() => {
+                const user = this.auth.verify(u, p);
+
+                if (user) {
+                    this.showDashboard(user.username);
+                } else {
+                    this.setLoading(false);
+                    alert("Username atau Password salah!");
+                    this.passInput.value = "";
+                    this.passInput.focus();
+                }
+            }, 1200);
+        }
+
+        setLoading(isLoading) {
+            if (isLoading) {
+                this.btn.classList.add('loading');
+                this.btn.disabled = true;
             } else {
-                msg.textContent = "Salah login";
-                msg.className = "error-text";
-                // Reset animas shake
-                msg.style.animation = 'none';
-                msg.offsetHeight; 
-                msg.style.animation = null;
+                this.btn.classList.remove('loading');
+                this.btn.disabled = false;
             }
         }
 
-        switchToUserPage(username) {
+        showDashboard(username) {
             document.getElementById('loginCard').classList.add('hidden');
-            document.getElementById('userCard').classList.remove('hidden');
-            document.getElementById('welcomeName').textContent = `Selamat datang, ${username}!`;
+            const userCard = document.getElementById('userCard');
+            userCard.classList.remove('hidden');
+            document.getElementById('welcomeName').textContent = `Welcome, ${username}!`;
         }
     }
 
-    // Jalankan Aplikasi
     const db = new StorageProvider();
     const service = new AuthService(db);
     new LoginApp(service);
 </script>
-
 </body>
 </html>
