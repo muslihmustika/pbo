@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Futuristic Auth System</title>
+    <title>Modern Welcome Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #10b981;
             --primary-glow: rgba(16, 185, 129, 0.4);
             --bg-dark: #0f172a;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,118 +27,105 @@
             color: white;
         }
 
-        /* Latar Belakang Animasi */
-        .bg-circles {
+        /* Animated Background Elements */
+        .bg-gradient {
             position: absolute; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
         }
 
-        .circle {
+        .orb {
             position: absolute; border-radius: 50%;
             background: var(--primary);
-            filter: blur(80px);
-            opacity: 0.15;
-            animation: move 20s infinite alternate;
+            filter: blur(100px);
+            opacity: 0.12;
+            animation: float 15s infinite alternate;
         }
 
-        .c1 { width: 300px; height: 300px; top: -10%; left: -5%; }
-        .c2 { width: 400px; height: 400px; bottom: -10%; right: -5%; animation-delay: -5s; }
+        .orb-1 { width: 400px; height: 400px; top: -10%; left: -10%; }
+        .orb-2 { width: 350px; height: 350px; bottom: -5%; right: -5%; animation-delay: -3s; }
 
-        @keyframes move {
-            from { transform: translate(0, 0); }
-            to { transform: translate(100px, 100px); }
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 80px); }
         }
 
-        /* Card Login */
+        /* Auth Card */
         .auth-card {
             background: var(--glass);
             width: 100%;
-            max-width: 420px;
+            max-width: 400px;
             padding: 50px 40px;
-            border-radius: 30px;
+            border-radius: 32px;
             border: 1px solid var(--glass-border);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            backdrop-filter: blur(30px);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.4);
             text-align: center;
-            animation: cardAppear 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes cardAppear {
-            from { opacity: 0; transform: scale(0.9) translateY(30px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .brand-logo {
-            width: 70px; height: 70px; background: var(--primary);
-            border-radius: 20px; margin: 0 auto 25px;
+        .icon-box {
+            width: 64px; height: 64px; background: var(--primary);
+            border-radius: 18px; margin: 0 auto 24px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; box-shadow: 0 0 30px var(--primary-glow);
+            font-size: 1.8rem; box-shadow: 0 10px 30px var(--primary-glow);
         }
 
-        .header h1 { font-size: 1.8rem; margin-bottom: 10px; font-weight: 700; }
-        .header p { color: #94a3b8; font-size: 0.95rem; margin-bottom: 35px; }
+        .header h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
+        .header p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 35px; }
 
-        /* Form Controls */
+        /* Input Styles */
         .form-group { text-align: left; margin-bottom: 22px; position: relative; }
-        label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px; font-weight: 500; }
+        label { display: block; font-size: 0.75rem; color: #64748b; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
         
         input {
             width: 100%;
-            padding: 15px 18px;
-            background: rgba(255,255,255,0.05);
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
             border: 1px solid var(--glass-border);
             border-radius: 14px;
             color: white;
             font-size: 1rem;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
         input:focus {
             outline: none;
-            background: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.07);
             border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
         }
 
-        .toggle-password {
-            position: absolute; right: 18px; top: 43px;
-            cursor: pointer; opacity: 0.5; transition: 0.3s;
+        .toggle-btn {
+            position: absolute; right: 16px; top: 38px;
+            cursor: pointer; font-size: 1.2rem; opacity: 0.4;
         }
-        .toggle-password:hover { opacity: 1; }
 
-        /* Buttons */
-        .btn-submit {
-            width: 100%; padding: 16px; margin-top: 15px;
+        /* Action Button */
+        .btn-main {
+            width: 100%; padding: 16px; margin-top: 10px;
             background: var(--primary);
-            color: #000; font-weight: 700; font-size: 1rem;
+            color: #064e3b; font-weight: 700; font-size: 1rem;
             border: none; border-radius: 14px;
             cursor: pointer; transition: all 0.3s;
             display: flex; align-items: center; justify-content: center;
         }
 
-        .btn-submit:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px var(--primary-glow);
-            filter: brightness(1.1);
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px var(--primary-glow);
         }
 
-        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .btn-main:active { transform: translateY(0); }
 
-        /* Dashboard View */
-        .user-avatar {
-            width: 80px; height: 80px; border-radius: 50%;
-            border: 3px solid var(--primary); margin: 0 auto 20px;
-            overflow: hidden; background: #334155;
-            display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
-        }
-
-        .hidden { display: none !important; }
-
-        /* Spinner */
         .spinner {
-            width: 22px; height: 22px;
+            width: 20px; height: 20px;
             border: 3px solid rgba(0,0,0,0.1);
-            border-top-color: #000;
+            border-top-color: #064e3b;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             display: none;
@@ -146,66 +133,64 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
         .loading .spinner { display: block; }
-        .loading .btn-text { display: none; }
+        .loading .text { display: none; }
+
+        .hidden { display: none !important; }
+
+        /* Success Card Elements */
+        .avatar {
+            width: 80px; height: 80px; background: #1e293b;
+            border: 2px solid var(--primary); border-radius: 50%;
+            margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+        }
     </style>
 </head>
 <body>
 
-    <div class="bg-circles">
-        <div class="circle c1"></div>
-        <div class="circle c2"></div>
+    <div class="bg-gradient">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
     </div>
 
     <div class="auth-card" id="loginCard">
-        <div class="brand-logo">🌿</div>
+        <div class="icon-box">🔓</div>
         <div class="header">
-            <h1>Halo Lagi!</h1>
-            <p>Masukkan akses anda untuk masuk</p>
+            <h1>Welcome</h1>
+            <p>Please enter your credentials to continue</p>
         </div>
         
         <div class="form-group">
             <label>Username</label>
-            <input type="text" id="userInput" placeholder="Nama pengguna..." autocomplete="off">
+            <input type="text" id="userInput" placeholder="Username" autocomplete="off">
         </div>
         
         <div class="form-group">
             <label>Password</label>
-            <input type="password" id="passInput" placeholder="••••••••">
-            <span class="toggle-password" id="toggleBtn">👁️</span>
+            <input type="password" id="passInput" placeholder="Password">
+            <span class="toggle-btn" id="toggleBtn">👁️</span>
         </div>
         
-        <button class="btn-submit" id="btnSubmit">
-            <span class="btn-text">Masuk Sekarang</span>
+        <button class="btn-main" id="btnSubmit">
+            <span class="text">Sign In</span>
             <div class="spinner"></div>
         </button>
     </div>
 
     <div class="auth-card hidden" id="userCard">
-        <div class="user-avatar">👤</div>
-        <h2 id="welcomeName">Selamat Datang!</h2>
-        <p style="color: #94a3b8; margin: 15px 0 30px;">Anda telah berhasil masuk ke sistem dengan aman.</p>
+        <div class="avatar">👤</div>
+        <h2 id="welcomeName">Welcome Back!</h2>
+        <p style="color: #94a3b8; margin: 15px 0 30px;">You have successfully accessed your dashboard.</p>
         
-        <button class="btn-submit" style="background: transparent; color: #ef4444; border: 1px solid #ef4444;" onclick="location.reload()">
-            Keluar Sistem
+        <button class="btn-main" style="background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);" onclick="location.reload()">
+            Logout Account
         </button>
     </div>
 
     <script>
-        class StorageProvider {
+        class App {
             constructor() {
-                this.key = "uas_db_auth";
-                this.seed();
-            }
-            seed() {
-                const users = [{u: "admin", p: "123"}, {u: "user", p: "uas"}];
-                if (!localStorage.getItem(this.key)) localStorage.setItem(this.key, JSON.stringify(users));
-            }
-            fetch() { return JSON.parse(localStorage.getItem(this.key)); }
-        }
-
-        class LoginApp {
-            constructor() {
-                this.db = new StorageProvider();
+                this.db = [{u: "admin", p: "123"}, {u: "user", p: "uas"}];
                 this.init();
             }
 
@@ -232,36 +217,33 @@
                 const p = document.getElementById('passInput').value.trim();
                 const btn = document.getElementById('btnSubmit');
 
-                if (!u || !p) { alert("Data tidak boleh kosong!"); return; }
+                if (!u || !p) { alert("Fields cannot be empty!"); return; }
 
                 btn.classList.add('loading');
                 btn.disabled = true;
 
-                // Simulasi proses 1.5 detik
                 setTimeout(() => {
-                    const accounts = this.db.fetch();
-                    const valid = accounts.find(acc => acc.u === u && acc.p === p);
+                    const user = this.db.find(acc => acc.u === u && acc.p === p);
 
-                    if (valid) {
+                    if (user) {
                         this.showDashboard(u);
                     } else {
                         btn.classList.remove('loading');
                         btn.disabled = false;
-                        alert("Akses ditolak! Username atau Password salah.");
-                        document.getElementById('passInput').value = "";
+                        alert("Access Denied: Wrong username or password.");
                     }
-                }, 1500);
+                }, 1200);
             }
 
             showDashboard(name) {
                 document.getElementById('loginCard').classList.add('hidden');
                 const userCard = document.getElementById('userCard');
                 userCard.classList.remove('hidden');
-                document.getElementById('welcomeName').textContent = `Halo, ${name}!`;
+                document.getElementById('welcomeName').textContent = `Welcome, ${name}!`;
             }
         }
 
-        new LoginApp();
+        new App();
     </script>
 </body>
 </html>
